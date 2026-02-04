@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #00A3E0;
+    --color-accent: #F4D000;
+    --color-ink: #000000;
+    --color-paper: #F7F2E8;
+}
+
+body {
+    @apply bg-paper text-ink font-sans;
+}
+
+/* Custom Animations */
+@keyframes drive {
+    0% {
+        transform: translateX(-50vw);
+    }
+
+    100% {
+        transform: translateX(50vw);
+    }
+}
+
+.animate-drive {
+    animation: drive 2s linear infinite;
+}

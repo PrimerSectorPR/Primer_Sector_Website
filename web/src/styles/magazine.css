@@ -1,0 +1,356 @@
+/* Shape Clipping */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.clip-rect-1 {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.clip-rect-2 {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 0% 100%);
+}
+
+.clip-rect-3 {
+    clip-path: polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%);
+}
+
+.clip-rect-4 {
+    clip-path: polygon(2% 2%, 98% 0%, 100% 98%, 0% 100%);
+}
+
+.clip-rect-5 {
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+}
+
+/* Animation Utilities */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.peel-container {
+    position: relative;
+    transform-style: preserve-3d;
+}
+
+.preserve-3d {
+    transform-style: preserve-3d;
+}
+
+.peel-top {
+    transform-origin: top left;
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 20;
+    backface-visibility: hidden;
+    background-color: #222;
+}
+
+.peel-under {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+}
+
+.peel-active .peel-top {
+    transform: rotateX(20deg) rotateY(-10deg) translateZ(50px) translateY(-10px);
+    box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.peel-sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.6s;
+    pointer-events: none;
+}
+
+.group:hover .peel-sheen {
+    opacity: 1;
+}
+
+/* Grunge & Texture */
+.grunge-overlay {
+    background-image: url('https://www.transparenttextures.com/patterns/dust.png');
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+/* --- NEW MAGAZINE EFFECTS --- */
+
+/* Paper Grain */
+.bg-grain {
+    position: relative;
+}
+
+.bg-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* SVG Noise Filter encoded */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 5;
+    opacity: 0.4;
+}
+
+/* Vignette */
+.bg-vignette {
+    position: relative;
+}
+
+.bg-vignette::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* Misregistration (CMK Offset) Effect */
+.text-misregistration {
+    position: relative;
+    /* Ensure the main text is visible */
+}
+
+/* Cyan Data Channel */
+.text-misregistration::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #00FFFF;
+    /* Cyan */
+    transform: translate(-3px, -3px);
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Magenta Data Channel */
+.text-misregistration::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #FF00FF;
+    /* Magenta */
+    transform: translate(3px, 3px);
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: -2;
+}
+
+/* --- ANIMATIONS --- */
+
+@keyframes ink-settle {
+    0% {
+        filter: blur(4px);
+        opacity: 0;
+        transform: scale(1.02);
+    }
+
+    100% {
+        filter: blur(0);
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes draw-line {
+    0% {
+        width: 0;
+        opacity: 0;
+    }
+
+    100% {
+        width: 100%;
+        opacity: 1;
+    }
+}
+
+@keyframes slide-up-reveal {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) rotate(-2deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(-2deg);
+    }
+}
+
+@keyframes paper-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.01);
+    }
+}
+
+@keyframes snap-cyan {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: translate(-5px, -5px);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-3px, -3px);
+        opacity: 0.6;
+    }
+}
+
+@keyframes snap-magenta {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0;
+    }
+
+    60% {
+        transform: translate(5px, 5px);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(3px, 3px);
+        opacity: 0.6;
+    }
+}
+
+/* Utility Classes */
+.animate-ink {
+    animation: ink-settle 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-draw {
+    animation: draw-line 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.animate-breathe {
+    animation: paper-breathe 20s infinite ease-in-out;
+}
+
+.animate-reveal {
+    animation: slide-up-reveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    opacity: 0;
+}
+
+/* Flat Reveal Animation (No Rotation) */
+@keyframes slide-up-flat {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-reveal-flat {
+    animation: slide-up-flat 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    opacity: 0;
+}
+
+.animate-slide-right {
+    animation: slide-in-right 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    opacity: 0;
+}
+
+@keyframes slide-in-right {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Stagger Delays */
+.anim-delay-100 {
+    animation-delay: 100ms;
+}
+
+.anim-delay-200 {
+    animation-delay: 200ms;
+}
+
+.anim-delay-300 {
+    animation-delay: 300ms;
+}
+
+.anim-delay-400 {
+    animation-delay: 400ms;
+}
+
+.anim-delay-500 {
+    animation-delay: 500ms;
+}
+
+.anim-delay-700 {
+    animation-delay: 700ms;
+}
+
+.anim-delay-1000 {
+    animation-delay: 1000ms;
+}
+
+.anim-delay-1200 {
+    animation-delay: 1200ms;
+}
+
+.anim-delay-1500 {
+    animation-delay: 1500ms;
+}
+
+.anim-delay-1700 {
+    animation-delay: 1700ms;
+}
+
+.anim-delay-2000 {
+    animation-delay: 2000ms;
+}
+
+.anim-delay-2200 {
+    animation-delay: 2200ms;
+}
+
+.anim-delay-2500 {
+    animation-delay: 2500ms;
+}
+
+.anim-delay-2700 {
+    animation-delay: 2700ms;
+}
+
+.anim-delay-3000 {
+    animation-delay: 3000ms;
+}
