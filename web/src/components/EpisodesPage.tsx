@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { usePodcastRss } from '../hooks/usePodcastRss';
 import { useAudio } from '../context/AudioContext';
-import { FaPlay, FaCalendar, FaClock, FaSpotify, FaApple, FaBarcode, FaQuoteRight } from 'react-icons/fa';
+import { FaPlay, FaCalendar, FaClock, FaSpotify, FaApple, FaBarcode, FaQuoteRight, FaHome } from 'react-icons/fa';
+import { usePageTransition } from '../context/PageTransitionContext';
 
 export const EpisodesPage: React.FC = () => {
     const { episodes, seasons, loading } = usePodcastRss();
     const { playEpisode } = useAudio();
+    const { triggerClose } = usePageTransition();
     const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
     const [selectedEpisodeId, setSelectedEpisodeId] = useState<string | null>(null);
     const [isFeaturedHovered, setIsFeaturedHovered] = useState(false);
@@ -62,6 +64,13 @@ export const EpisodesPage: React.FC = () => {
                     <span className="opacity-50">EST. 2021</span>
                     <span>Vol. 25 &bull; ARCHIVES</span>
                 </span>
+                <button
+                    onClick={() => triggerClose(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}
+                    className="flex items-center gap-2 hover:text-primary transition-colors cursor-pointer group"
+                >
+                    <FaHome className="text-lg group-hover:scale-110 transition-transform" />
+                    <span className="hidden sm:inline">Home</span>
+                </button>
             </div>
 
             {/* --- PS LOGO STAMP --- */}
@@ -70,10 +79,10 @@ export const EpisodesPage: React.FC = () => {
             </div>
 
             {/* Main Content Container */}
-            <div className="flex-1 flex flex-col pt-16 md:pt-4 lg:pt-16 px-4 md:px-12 pb-8 overflow-y-auto relative z-20 scrollbar-hide">
+            <div className="flex-1 flex flex-col pt-16 md:pt-4 lg:pt-16 px-4 md:px-12 pb-8 lg:pb-4 overflow-y-auto lg:overflow-hidden relative z-20 scrollbar-hide min-h-0">
 
                 {/* Header & Season Filter */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-4 border-b-4 border-black pb-2 shrink-0 relative mt-4 md:mt-8">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-8 md:mb-4 lg:mb-3 border-b-4 border-black pb-2 shrink-0 relative mt-4 md:mt-8 lg:mt-4">
                     <span className="absolute -top-6 left-0 font-mono text-[10px] uppercase tracking-[0.5em] text-gray-400">Issue No. {activeSeason?.replace(/\D/g, '') || '01'}</span>
 
                     <div>
@@ -87,8 +96,8 @@ export const EpisodesPage: React.FC = () => {
                         </h2>
                     </div>
 
-                    {/* Season Tabs (Desktop / Mobile only) - Hidden on Tablet intermediate */}
-                    <div className="flex gap-1 mt-6 md:mt-0 items-end md:hidden lg:flex">
+                    {/* Season Tabs (Desktop only) */}
+                    <div className="hidden lg:flex gap-1 mt-6 md:mt-0 items-end">
                         <span className="font-mono text-[10px] vertical-rl rotate-180 text-gray-400 mr-2 uppercase tracking-widest hidden md:block">Select Volume</span>
                         {seasons.map((season) => (
                             <button
@@ -105,7 +114,7 @@ export const EpisodesPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 flex-1 border-b border-black min-h-0">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 flex-1 lg:flex-grow border-b border-black min-h-0 lg:overflow-hidden">
 
                     {/* --- FEATURED EPISODE (TOP / LEFT) --- */}
                     <div className="col-span-1 lg:col-span-8 flex flex-col h-full lg:border-r-2 lg:border-black lg:pr-12 relative md:items-center lg:items-stretch">
@@ -126,7 +135,7 @@ export const EpisodesPage: React.FC = () => {
 
                                     {/* MAG COVER PRESENTATION: Portrait, Masthead Overlay, Barcode */}
                                     <div
-                                        className="relative w-full md:w-[220px] 2xl:w-[380px] aspect-[3/4] shrink-0 z-10 group transition-all duration-300 shadow-[10px_10px_0_rgba(0,0,0,1)] border-4 border-white bg-black transform rotate-1 hover:rotate-0 hover:scale-[1.02] hover:shadow-[15px_15px_0_rgba(244,208,0,1)]"
+                                        className="relative w-full max-w-[280px] md:w-[220px] md:max-w-none 2xl:w-[380px] aspect-[3/4] shrink-0 z-10 group transition-all duration-300 shadow-[10px_10px_0_rgba(0,0,0,1)] border-4 border-white bg-black transform rotate-1 hover:rotate-0 hover:scale-[1.02] hover:shadow-[15px_15px_0_rgba(244,208,0,1)]"
                                         onMouseEnter={() => setIsFeaturedHovered(true)}
                                         onMouseLeave={() => setIsFeaturedHovered(false)}
                                     >
@@ -243,23 +252,23 @@ export const EpisodesPage: React.FC = () => {
                     </div>
 
                     {/* --- RECENT LIST (BOTTOM BAR / RIGHT COL) --- */}
-                    <div className="col-span-1 lg:col-span-4 flex flex-col h-auto lg:h-full border-t-4 border-black lg:border-t-0 lg:pl-8 pb-8 lg:pb-0 relative bg-[#F7F2E8] md:mt-4 lg:mt-0">
+                    <div className="col-span-1 lg:col-span-4 flex flex-col h-auto lg:h-full lg:max-h-full border-t-4 border-black lg:border-t-0 lg:pl-8 pb-8 lg:pb-0 relative bg-[#F7F2E8] md:mt-4 lg:mt-0">
 
                         {/* HEADER ROW: Title + Filters */}
-                        <div className="flex justify-between items-end border-b-2 border-black mb-4 mx-4 lg:mx-0 pt-4 lg:pt-0 pb-1 sticky top-0 bg-[#F7F2E8] z-20">
+                        <div className="flex justify-between items-end border-b-2 border-black mb-4 mx-4 lg:mx-0 pt-4 lg:pt-0 pb-1 sticky top-0 bg-[#F7F2E8] z-20 lg:flex-shrink-0">
                             <h4 className="font-mono text-sm uppercase tracking-widest text-primary font-bold whitespace-nowrap">
                                 Index / Recent
                             </h4>
 
                             <div className="flex items-center gap-4">
-                                {/* Arrows (Visible on MD) */}
-                                <div className="hidden md:flex lg:hidden gap-1">
+                                {/* Arrows (Visible on Mobile & Tablet) */}
+                                <div className="flex lg:hidden gap-1">
                                     <button onClick={() => scrollList('left')} className="w-6 h-6 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors">&lt;</button>
                                     <button onClick={() => scrollList('right')} className="w-6 h-6 border border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors">&gt;</button>
                                 </div>
 
-                                {/* TABLET FILTERS (Visible on MD, Hidden on LG) */}
-                                <div className="hidden md:flex lg:hidden gap-1">
+                                {/* Year Filters (Visible on Mobile & Tablet, Hidden on Desktop) */}
+                                <div className="flex lg:hidden gap-1">
                                     {seasons.map((season) => (
                                         <button
                                             key={`tab-${season}`}
@@ -277,52 +286,83 @@ export const EpisodesPage: React.FC = () => {
                         </div>
 
                         {/* SCROLLABLE LIST WRAPPER */}
-                        <div ref={listRef} className="flex-1 overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:overflow-y-auto flex md:flex-row lg:flex-col gap-4 px-4 lg:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth">
+                        <div className="relative flex-1 md:flex-none lg:flex-1 lg:min-h-0 overflow-hidden">
+                            <div ref={listRef} className="md:relative lg:absolute lg:inset-0 overflow-x-auto md:overflow-x-auto lg:overflow-x-hidden lg:overflow-y-scroll flex md:flex-row lg:flex-col gap-4 px-4 lg:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth md:pb-4 lg:pb-0">
 
-                            {listEpisodes.map((ep) => {
-                                const isSelected = featuredEpisode?.id === ep.id;
-                                return (
-                                    <div
-                                        key={ep.id}
-                                        onClick={() => setSelectedEpisodeId(ep.id)}
-                                        className={`group cursor-pointer border border-gray-300 md:border-black lg:border-gray-300 lg:border-b transition-all flex flex-col lg:flex-row gap-3 md:min-w-[200px] md:max-w-[200px] lg:min-w-0 lg:w-full lg:max-w-none snap-start bg-white lg:bg-transparent lg:py-3 box-border
+                                {listEpisodes.map((ep) => {
+                                    const isSelected = featuredEpisode?.id === ep.id;
+                                    return (
+                                        <div
+                                            key={ep.id}
+                                            onClick={() => setSelectedEpisodeId(ep.id)}
+                                            className={`group cursor-pointer border border-gray-300 md:border-black lg:border-gray-300 lg:border-b transition-all flex flex-col lg:flex-row gap-3 md:min-w-[200px] md:max-w-[200px] lg:min-w-0 lg:w-full lg:max-w-none snap-start bg-white lg:bg-transparent lg:py-3 box-border
                                             ${isSelected ? 'border-accent shadow-md lg:bg-white lg:-mx-4 lg:px-4 lg:border-l-4 lg:border-l-accent lg:shadow-sm' : 'hover:border-black lg:hover:bg-white/40 lg:hover:pl-2'}
                                         `}
-                                    >
-                                        {/* THUMBNAIL AREA (Card Style on MD) */}
-                                        <div className="relative aspect-video md:aspect-video lg:w-12 lg:h-12 lg:aspect-square shrink-0 overflow-hidden grayscale group-hover:grayscale-0 transition-all">
-                                            <img src={ep.image} alt={ep.title} className="w-full h-full object-cover" />
+                                        >
+                                            {/* THUMBNAIL AREA (Card Style on MD) */}
+                                            <div className="relative aspect-video md:aspect-video lg:w-12 lg:h-12 lg:aspect-square shrink-0 overflow-hidden grayscale group-hover:grayscale-0 transition-all">
+                                                <img src={ep.image} alt={ep.title} className="w-full h-full object-cover" />
 
-                                            {/* Badge Over Image on MD */}
-                                            <div className="absolute top-0 right-0 bg-black text-accent font-mono text-[10px] px-1 lg:hidden">
-                                                #{ep.episodeNumber || '??'}
+                                                {/* Badge Over Image on MD */}
+                                                <div className="absolute top-0 right-0 bg-black text-accent font-mono text-[10px] px-1 lg:hidden">
+                                                    #{ep.episodeNumber || '??'}
+                                                </div>
+                                            </div>
+
+                                            {/* TEXT CONTENT */}
+                                            <div className="flex-1 flex flex-col justify-between p-2 lg:p-0 min-w-0">
+                                                {/* Badge on Desktop (Left) */}
+                                                <div className="hidden lg:flex w-8 h-8 shrink-0 bg-black text-accent items-center justify-center font-mono text-xs font-bold border border-accent shadow-sm mb-2">
+                                                    {ep.episodeNumber || '??'}
+                                                </div>
+
+                                                <h5 className={`font-bold text-xs md:text-xs lg:text-sm uppercase leading-tight line-clamp-2 mb-1 transition-colors ${isSelected ? 'text-black' : 'text-gray-600 group-hover:text-black'}`}>
+                                                    {ep.title}
+                                                </h5>
+
+                                                <div className="flex justify-between items-center text-[9px] font-mono text-gray-500 mt-auto">
+                                                    <span>{ep.pubDate.toLocaleDateString()}</span>
+                                                    <span className="bg-gray-200 px-1 rounded flex items-center gap-1">
+                                                        <FaClock size={8} /> {ep.duration}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
+                                    );
+                                })}
+                            </div>
 
-                                        {/* TEXT CONTENT */}
-                                        <div className="flex-1 flex flex-col justify-between p-2 lg:p-0 min-w-0">
-                                            {/* Badge on Desktop (Left) */}
-                                            <div className="hidden lg:flex w-8 h-8 shrink-0 bg-black text-accent items-center justify-center font-mono text-xs font-bold border border-accent shadow-sm mb-2">
-                                                {ep.episodeNumber || '??'}
-                                            </div>
+                            {/* Desktop Vertical Carousel Controls */}
+                            <div className="hidden lg:flex flex-col gap-2 absolute right-0 top-1/3 -translate-y-1/2 z-30">
+                                {/* Scroll Up */}
+                                <button
+                                    onClick={() => {
+                                        if (listRef.current) {
+                                            listRef.current.scrollBy({ top: -300, behavior: 'smooth' });
+                                        }
+                                    }}
+                                    className="w-8 h-8 bg-black text-accent border-2 border-accent flex items-center justify-center hover:bg-accent hover:text-black transition-all shadow-[4px_4px_0_rgba(0,0,0,0.3)] hover:shadow-[2px_2px_0_rgba(0,0,0,0.3)] hover:translate-x-[2px] hover:translate-y-[2px] font-bold text-lg"
+                                    aria-label="Scroll up"
+                                >
+                                    ↑
+                                </button>
 
-                                            <h5 className={`font-bold text-xs md:text-xs lg:text-sm uppercase leading-tight line-clamp-2 mb-1 transition-colors ${isSelected ? 'text-black' : 'text-gray-600 group-hover:text-black'}`}>
-                                                {ep.title}
-                                            </h5>
-
-                                            <div className="flex justify-between items-center text-[9px] font-mono text-gray-500 mt-auto">
-                                                <span>{ep.pubDate.toLocaleDateString()}</span>
-                                                <span className="bg-gray-200 px-1 rounded flex items-center gap-1">
-                                                    <FaClock size={8} /> {ep.duration}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                {/* Scroll Down */}
+                                <button
+                                    onClick={() => {
+                                        if (listRef.current) {
+                                            listRef.current.scrollBy({ top: 300, behavior: 'smooth' });
+                                        }
+                                    }}
+                                    className="w-8 h-8 bg-black text-accent border-2 border-accent flex items-center justify-center hover:bg-accent hover:text-black transition-all shadow-[4px_4px_0_rgba(0,0,0,0.3)] hover:shadow-[2px_2px_0_rgba(0,0,0,0.3)] hover:translate-x-[2px] hover:translate-y-[2px] font-bold text-lg"
+                                    aria-label="Scroll down"
+                                >
+                                    ↓
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="mt-4 md:mt-0 lg:mt-8 text-center opacity-30">
+                        <div className="mt-4 md:mt-4 lg:mt-3 text-center opacity-30 lg:flex-shrink-0">
                             <div className="inline-block w-2 h-2 rounded-full bg-black mb-2"></div>
                             <p className="font-mono text-[9px] uppercase">End of Transmission</p>
                         </div>

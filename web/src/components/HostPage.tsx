@@ -1,5 +1,6 @@
 import React from 'react';
-import { FaPlay } from 'react-icons/fa';
+import { FaPlay, FaHome } from 'react-icons/fa';
+import { usePageTransition } from '../context/PageTransitionContext';
 
 interface HostPageProps {
     name: string;
@@ -11,6 +12,7 @@ interface HostPageProps {
 }
 
 export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, index }) => {
+    const { triggerClose } = usePageTransition();
 
     const getHostContent = () => {
         if (name === "Axel") {
@@ -33,6 +35,18 @@ export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, in
                 champion2026: "Fernando Alonso",
                 teamChampion2026: "Ferrari",
                 hotTake: "Las regulaciones nuevas van a expose a muchos equipos (2026: Ferrari wins it all)"
+            };
+        }
+        if (name === "Angel") {
+            return {
+                favoriteTeam: "Williams",
+                ruleChange: "Quitaría el cost cap. Let them throw all they got.",
+                overrated: "Stroll no debería estar ahí, y Leclerc aparenta estar sobrevalorado. ¿Cuántos de sus shortcomings se deben a Ferrari y cuántos son por él?",
+                worstDecision: "¿En diseño? Williams aún no hace testing por esconder el carro, supuestamente. ¿En motor? Red Bull Ford Powertrains; no confío en Ford when compared to Mercedes, Ferrari y Honda en F1.",
+                champion2026: "George Russell",
+                teamChampion2026: "Mercedes",
+                hotTake: "Newey, the airbender, va a struggle mostrando sus diseños en Aston Martin. Aston Martin va a tener una temporada difícil."
+
             };
         }
         return {
@@ -58,6 +72,13 @@ export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, in
                     Primer Sector Magazine
                 </span>
                 <span className="hidden md:inline">Vol. 25 &bull; Perfil del Equipo</span>
+                <button
+                    onClick={() => triggerClose(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}
+                    className="flex items-center gap-2 hover:text-accent transition-colors cursor-pointer group"
+                >
+                    <FaHome className="text-lg group-hover:scale-110 transition-transform" />
+                    <span className="hidden sm:inline">Home</span>
+                </button>
             </div>
 
             {/* --- PS LOGO STAMP --- */}
@@ -88,7 +109,7 @@ export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, in
 
                         {/* Polaroid Frame */}
                         <div className="bg-white p-3 shadow-[8px_8px_0px_rgba(0,0,0,0.2)] transform -rotate-2 relative z-10 transition-transform duration-500 group-hover:rotate-0">
-                            <div className="relative aspect-[4/5] overflow-hidden filter grayscale contrast-125 sepia-[0.3]">
+                            <div className="relative aspect-[4/5] overflow-hidden filter grayscale contrast-[1.15] brightness-[1.05] sepia-[0.15]">
                                 <img
                                     src={image || "https://placehold.co/400x500/png"}
                                     alt={name}

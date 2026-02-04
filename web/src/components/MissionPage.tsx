@@ -1,6 +1,10 @@
 import React from 'react';
+import { FaHome } from 'react-icons/fa';
+import { usePageTransition } from '../context/PageTransitionContext';
 
 export const MissionPage: React.FC = () => {
+    const { triggerClose } = usePageTransition();
+
     return (
         <section className="h-screen w-full bg-white text-black flex flex-col justify-center relative overflow-hidden select-none bg-grain bg-vignette font-sans">
 
@@ -11,6 +15,13 @@ export const MissionPage: React.FC = () => {
                     Primer Sector Magazine
                 </span>
                 <span className="hidden md:inline">Vol. 25 &bull; Editorial</span>
+                <button
+                    onClick={() => triggerClose(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}
+                    className="flex items-center gap-2 hover:text-accent transition-colors cursor-pointer group"
+                >
+                    <FaHome className="text-lg group-hover:scale-110 transition-transform" />
+                    <span className="hidden sm:inline">Home</span>
+                </button>
             </div>
 
             {/* --- PS LOGO STAMP --- */}

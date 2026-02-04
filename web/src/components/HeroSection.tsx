@@ -1,11 +1,15 @@
 import React from 'react';
 import { usePodcastRss } from '../hooks/usePodcastRss';
 import { useErgast } from '../hooks/useErgast';
-import { FaApple, FaSpotify, FaYoutube, FaLink, FaBolt } from 'react-icons/fa';
+import { FaApple, FaSpotify, FaYoutube, FaLink, FaBolt, FaHome } from 'react-icons/fa';
+import { usePageTransition } from '../context/PageTransitionContext';
+import { useNavigation } from '../context/NavigationContext';
 
 export const HeroSection: React.FC = () => {
     const { episodes, loading: rssLoading } = usePodcastRss();
     const { latestResult, nextRace, loading: f1Loading } = useErgast();
+    const { triggerClose } = usePageTransition();
+    const { navigateToPage } = useNavigation();
     const latestEpisode = episodes[0];
 
     // Helper to cut title at first punctuation
@@ -32,7 +36,13 @@ export const HeroSection: React.FC = () => {
                     Primer Sector Magazine
                 </span>
                 <span className="hidden md:inline">Vol. 25 &bull; Edición Febrero 2026</span>
-                <span>$4.99 USD</span>
+                <button
+                    onClick={() => triggerClose(() => window.scrollTo({ top: 0, behavior: 'smooth' }))}
+                    className="flex items-center gap-2 hover:text-accent transition-colors cursor-pointer group"
+                >
+                    <FaHome className="text-lg group-hover:scale-110 transition-transform" />
+                    <span className="hidden sm:inline">Home</span>
+                </button>
             </div>
 
             <div className="min-h-screen w-full flex flex-col pt-16 md:pt-20 pb-8 px-4 md:px-12 relative z-10">
@@ -44,7 +54,10 @@ export const HeroSection: React.FC = () => {
 
                         {/* Teaser 1 (Dynamic RSS) */}
                         <div className="animate-slide-right anim-delay-500">
-                            <div className="transform -rotate-2 group cursor-pointer origin-left transition-transform hover:scale-105">
+                            <div
+                                onClick={() => navigateToPage(2)}
+                                className="transform -rotate-2 group cursor-pointer origin-left transition-transform hover:scale-105"
+                            >
                                 <div className="flex items-center gap-2 mb-1">
                                     <div className="bg-accent text-black px-2 py-1 font-black uppercase text-xs inline-block shadow-[2px_2px_0_rgba(0,0,0,1)]">
                                         {rssLoading ? '...' : 'ÚLTIMO EPISODIO'}
@@ -56,7 +69,7 @@ export const HeroSection: React.FC = () => {
                                     )}
                                 </div>
 
-                                <h3 className="font-black text-4xl uppercase leading-[0.9] line-clamp-3">
+                                <h3 className="font-black text-2xl md:text-3xl lg:text-4xl uppercase leading-[0.9] line-clamp-3">
                                     {latestEpisode ? formatTitle(latestEpisode.title) : 'Dentro del Paddock'}
                                 </h3>
                                 <p className="font-mono text-xs mt-2 border-l-4 border-black pl-2 leading-tight opacity-80 line-clamp-3">
@@ -153,7 +166,10 @@ export const HeroSection: React.FC = () => {
                         </div>
 
                         {/* Mobile Only Teaser */}
-                        <div className="md:hidden mt-24 text-center transform -rotate-1 animate-reveal anim-delay-1200 group cursor-pointer transition-transform hover:scale-105">
+                        <div
+                            onClick={() => navigateToPage(2)}
+                            className="md:hidden mt-24 text-center transform -rotate-1 animate-reveal anim-delay-1200 group cursor-pointer transition-transform hover:scale-105"
+                        >
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <div className="bg-accent text-black px-2 py-1 font-black uppercase text-xs inline-block shadow-[2px_2px_0_rgba(0,0,0,1)]">
                                     {rssLoading ? '...' : 'ÚLTIMO EPISODIO'}

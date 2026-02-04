@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { usePageTransition } from '../context/PageTransitionContext';
+import { useNavigation } from '../context/NavigationContext';
 
 interface MagazineLayoutProps {
     children: React.ReactNode[];
@@ -6,7 +8,16 @@ interface MagazineLayoutProps {
 
 export const MagazineLayout: React.FC<MagazineLayoutProps> = ({ children }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const mobileContainerRef = useRef<HTMLDivElement>(null);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const { isClosing } = usePageTransition();
+    const { registerContainer } = useNavigation();
+
+    // Register containers with navigation context
+    useEffect(() => {
+        registerContainer(containerRef.current, mobileContainerRef.current);
+    }, [registerContainer]);
+
 
     const pages = React.Children.toArray(children);
     const totalPages = pages.length;
@@ -34,13 +45,27 @@ export const MagazineLayout: React.FC<MagazineLayoutProps> = ({ children }) => {
         return () => container.removeEventListener('scroll', handleScroll);
     }, [totalPages]);
 
+    // Handle closing animation - different behavior for mobile vs desktop
+    useEffect(() => {
+        if (isClosing) {
+            // Mobile: instant scroll to top
+            if (mobileContainerRef.current) {
+                mobileContainerRef.current.scrollTo({ top: 0, behavior: 'auto' });
+            }
+            // Desktop: smooth scroll with animation
+            if (containerRef.current) {
+                containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    }, [isClosing]);
+
     return (
         // MAIN CONTAINER
         <div
             className="h-screen w-full bg-black relative md:overflow-hidden font-sans"
         >
             {/* MOBILE: Simple Vertical Snap Scroll */}
-            <div className="md:hidden h-full w-full overflow-y-auto snap-y snap-mandatory scroll-smooth">
+            <div ref={mobileContainerRef} className="md:hidden h-full w-full overflow-y-auto snap-y snap-mandatory scroll-smooth">
                 {pages.map((page, index) => (
                     <div key={index} className="w-full snap-start min-h-screen">
                         {page}
@@ -81,14 +106,19 @@ export const MagazineLayout: React.FC<MagazineLayoutProps> = ({ children }) => {
                                 // Z-Index: Page 0 is Highest. Page N is Lowest.
                                 const zIndex = (totalPages - index) * 10;
 
+                                // Override rotation when closing - close all pages
+                                const finalRotation = isClosing ? 0 : rotation;
+
                                 return (
                                     <div
                                         key={index}
                                         className="absolute inset-0 w-full h-full origin-left bg-white shadow-2xl"
                                         style={{
                                             zIndex: zIndex,
-                                            transform: `rotateY(${rotation}deg)`,
-                                            transition: 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)',
+                                            transform: `rotateY(${finalRotation}deg)`,
+                                            transition: isClosing
+                                                ? 'transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1)'
+                                                : 'transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1)',
                                             backfaceVisibility: 'hidden',
                                         }}
                                     >
