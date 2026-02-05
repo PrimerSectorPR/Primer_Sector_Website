@@ -1,12 +1,26 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { FaHome } from 'react-icons/fa';
 import { usePageTransition } from '../context/PageTransitionContext';
+import { useNavigation } from '../context/NavigationContext';
 
-export const MissionPage: React.FC = () => {
+interface MissionPageProps {
+    index: number;
+}
+
+export const MissionPage: React.FC<MissionPageProps> = ({ index }) => {
     const { triggerClose } = usePageTransition();
+    const { activePageIndex } = useNavigation();
+    const isActive = activePageIndex === index;
 
     return (
         <section className="h-screen w-full bg-white text-black flex flex-col justify-center relative overflow-hidden select-none bg-grain bg-vignette font-sans">
+            {isActive && (
+                <Helmet>
+                    <title>Misión | Primer Sector</title>
+                    <meta name="description" content="Nuestra misión: Llevar la emoción de la Fórmula 1 a todos los hispanohablantes." />
+                </Helmet>
+            )}
 
             {/* --- MASTHEAD STRIP --- */}
             <div className="absolute top-0 left-0 right-0 h-10 md:h-12 bg-black text-[#F7F2E8] flex items-center justify-between px-4 md:px-8 font-mono text-xs md:text-sm uppercase tracking-widest z-50 border-b-2 border-accent">

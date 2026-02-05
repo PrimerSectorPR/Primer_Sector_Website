@@ -1,15 +1,21 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { usePodcastRss } from '../hooks/usePodcastRss';
 import { useErgast } from '../hooks/useErgast';
 import { FaApple, FaSpotify, FaYoutube, FaLink, FaBolt, FaHome } from 'react-icons/fa';
 import { usePageTransition } from '../context/PageTransitionContext';
 import { useNavigation } from '../context/NavigationContext';
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+    index: number;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({ index }) => {
     const { episodes, loading: rssLoading } = usePodcastRss();
     const { latestResult, nextRace, loading: f1Loading } = useErgast();
     const { triggerClose } = usePageTransition();
-    const { navigateToPage } = useNavigation();
+    const { navigateToPage, activePageIndex } = useNavigation();
+    const isActive = activePageIndex === index;
     const latestEpisode = episodes[0];
 
     // Helper to cut title at first punctuation
@@ -28,6 +34,12 @@ export const HeroSection: React.FC = () => {
 
     return (
         <section className="relative min-h-screen bg-[#F7F2E8] text-black overflow-hidden bg-grain bg-vignette font-sans selection:bg-accent selection:text-black">
+            {isActive && (
+                <Helmet>
+                    <title>Primer Sector | Home</title>
+                    <meta name="description" content="Bienvenido a Primer Sector, tu revista digital de Fórmula 1 en español." />
+                </Helmet>
+            )}
 
             {/* --- MASTHEAD STRIP --- */}
             <div className="absolute top-0 left-0 right-0 h-10 md:h-12 bg-black text-[#F7F2E8] flex items-center justify-between px-4 md:px-8 font-mono text-xs md:text-sm uppercase tracking-widest z-50 border-b-2 border-accent animate-ink anim-delay-100">

@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = 3001;
@@ -12,6 +14,19 @@ const cache = {
     timestamp: 0,
     CACHE_DURATION: 5 * 60 * 1000 // 5 minutes
 };
+
+// Security: Set secure HTTP headers
+app.use(helmet());
+
+// Security: Rate limiting - max 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true, // Return rate limit info in headers
+    legacyHeaders: false, // Disable X-RateLimit-* headers
+});
+app.use(limiter);
 
 app.use(cors());
 

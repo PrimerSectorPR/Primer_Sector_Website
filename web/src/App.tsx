@@ -11,6 +11,7 @@ import { MissionPage } from "./components/MissionPage";
 import { HostPage } from "./components/HostPage";
 
 import { EpisodesPage } from "./components/EpisodesPage";
+import { ContactPage } from "./components/ContactPage";
 
 function App() {
   return (
@@ -19,11 +20,11 @@ function App() {
         <AudioProvider>
           <div className="bg-paper min-h-screen">
             <MagazineLayout>
-              <HeroSection />
+              <HeroSection index={0} />
 
-              <MissionPage />
+              <MissionPage index={1} />
 
-              <EpisodesPage />
+              <EpisodesPage index={2} />
 
               <HostPage
                 name="Xandel"
@@ -31,7 +32,7 @@ function App() {
                 description="Cuestiona las reglas y la moral de los competidores. Eso sí, no hablen de Yuki Tsunoda porque hasta ahí llega su tolerancia."
                 image="/team/xandel.png"
                 color="bg-primary"
-                index={4}
+                index={3}
               />
 
               <HostPage
@@ -40,7 +41,7 @@ function App() {
                 description="Te traerá datos, información y análisis del aspecto técnico... pero de vez en cuando va a defender a Red Bull."
                 image="/team/angel.png"
                 color="bg-black text-white"
-                index={5}
+                index={4}
               />
 
               <HostPage
@@ -49,8 +50,10 @@ function App() {
                 description="Productor y Director. A menudo está en desacuerdo solo por llevar la contraria, mientras aporta su perspectiva fresca de fan nuevo."
                 image="/team/axel.png"
                 color="bg-accent"
-                index={6}
+                index={5}
               />
+
+              <ContactPage index={6} />
 
             </MagazineLayout>
 

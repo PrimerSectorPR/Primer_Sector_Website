@@ -11,7 +11,7 @@ export const MagazineLayout: React.FC<MagazineLayoutProps> = ({ children }) => {
     const mobileContainerRef = useRef<HTMLDivElement>(null);
     const [scrollProgress, setScrollProgress] = useState(0);
     const { isClosing } = usePageTransition();
-    const { registerContainer } = useNavigation();
+    const { registerContainer, setActivePageIndex } = useNavigation();
 
     // Register containers with navigation context
     useEffect(() => {
@@ -39,11 +39,14 @@ export const MagazineLayout: React.FC<MagazineLayoutProps> = ({ children }) => {
             const rawProgress = Math.min(totalPages - 1, Math.max(0, (scrollY / maxScroll) * (totalPages - 1)));
 
             setScrollProgress(rawProgress);
+
+            // Update active page index (rounded to nearest integer)
+            setActivePageIndex(Math.round(rawProgress));
         };
 
         container.addEventListener('scroll', handleScroll, { passive: true });
         return () => container.removeEventListener('scroll', handleScroll);
-    }, [totalPages]);
+    }, [totalPages, setActivePageIndex]);
 
     // Handle closing animation - different behavior for mobile vs desktop
     useEffect(() => {

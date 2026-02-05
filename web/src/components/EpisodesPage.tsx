@@ -1,13 +1,21 @@
 import React, { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { usePodcastRss } from '../hooks/usePodcastRss';
 import { useAudio } from '../context/AudioContext';
 import { FaPlay, FaCalendar, FaClock, FaSpotify, FaApple, FaBarcode, FaQuoteRight, FaHome } from 'react-icons/fa';
 import { usePageTransition } from '../context/PageTransitionContext';
+import { useNavigation } from '../context/NavigationContext';
 
-export const EpisodesPage: React.FC = () => {
+interface EpisodesPageProps {
+    index: number;
+}
+
+export const EpisodesPage: React.FC<EpisodesPageProps> = ({ index }) => {
     const { episodes, seasons, loading } = usePodcastRss();
     const { playEpisode } = useAudio();
     const { triggerClose } = usePageTransition();
+    const { activePageIndex } = useNavigation();
+    const isActive = activePageIndex === index;
     const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
     const [selectedEpisodeId, setSelectedEpisodeId] = useState<string | null>(null);
     const [isFeaturedHovered, setIsFeaturedHovered] = useState(false);
@@ -46,14 +54,26 @@ export const EpisodesPage: React.FC = () => {
     if (loading) {
         return (
             <section className="h-screen w-full bg-[#F7F2E8] flex items-center justify-center font-black text-4xl uppercase animate-pulse">
+                {isActive && (
+                    <Helmet>
+                        <title>Cargando... | Primer Sector</title>
+                    </Helmet>
+                )}
                 Cargando Edición...
             </section>
         );
     }
 
     return (
-        <section className="h-screen w-full bg-[#F7F2E8] text-black relative overflow-hidden select-none bg-grain bg-vignette font-sans flex flex-col">
+        <section className="relative min-h-screen bg-[#F7F2E8] text-black overflow-hidden bg-grain bg-vignette font-sans selection:bg-accent selection:text-black">
+            {isActive && (
+                <Helmet>
+                    <title>Episodios | Primer Sector</title>
+                    <meta name="description" content="Escucha los últimos episodios de Primer Sector, tu podcast de Fórmula 1 en español." />
+                </Helmet>
+            )}
 
+            {/* Background Elements */}
             {/* --- MASTHEAD STRIP --- */}
             <div className="absolute top-0 left-0 right-0 h-10 md:h-12 bg-black text-[#F7F2E8] flex items-center justify-between px-4 md:px-8 font-mono text-xs md:text-sm uppercase tracking-widest z-50 border-b-4 border-primary">
                 <span className="flex items-center gap-2">

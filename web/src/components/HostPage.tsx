@@ -1,6 +1,8 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { FaPlay, FaHome } from 'react-icons/fa';
 import { usePageTransition } from '../context/PageTransitionContext';
+import { useNavigation } from '../context/NavigationContext';
 
 interface HostPageProps {
     name: string;
@@ -13,6 +15,8 @@ interface HostPageProps {
 
 export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, index }) => {
     const { triggerClose } = usePageTransition();
+    const { activePageIndex } = useNavigation();
+    const isActive = activePageIndex === index;
 
     const getHostContent = () => {
         if (name === "Axel") {
@@ -63,10 +67,16 @@ export const HostPage: React.FC<HostPageProps> = ({ name, role, image, color, in
     const content = getHostContent();
 
     return (
-        <section className="min-h-screen w-full bg-paper text-black relative select-none md:h-screen md:overflow-hidden font-sans bg-grain bg-vignette flex flex-col md:block">
+        <section className="min-h-screen w-full bg-[#F7F2E8] text-black flex flex-col items-center justify-center relative overflow-hidden select-none bg-grain bg-vignette font-sans p-6 md:p-12">
+            {isActive && (
+                <Helmet>
+                    <title>Host: {name} | Primer Sector</title>
+                    <meta name="description" content={`Conoce a ${name}, ${role} del podcast Primer Sector.`} />
+                </Helmet>
+            )}
 
             {/* --- MASTHEAD STRIP --- */}
-            <div className="absolute top-0 left-0 right-0 h-10 md:h-12 bg-black text-paper flex items-center justify-between px-4 md:px-8 font-mono text-xs md:text-sm uppercase tracking-widest z-50 border-b-2 border-accent">
+            <div className="absolute top-0 left-0 right-0 h-10 md:h-12 bg-black text-[#F7F2E8] flex items-center justify-between px-4 md:px-8 font-mono text-xs md:text-sm uppercase tracking-widest z-50 border-b-2 border-accent">
                 <span className="flex items-center gap-2">
                     <span className="w-3 h-3 bg-accent rounded-full inline-block"></span>
                     Primer Sector Magazine

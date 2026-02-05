@@ -3,6 +3,8 @@ import React, { createContext, useContext, useRef, useCallback } from 'react';
 interface NavigationContextType {
     navigateToPage: (pageIndex: number) => void;
     registerContainer: (desktop: HTMLDivElement | null, mobile: HTMLDivElement | null) => void;
+    activePageIndex: number;
+    setActivePageIndex: (index: number) => void;
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -10,6 +12,7 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const desktopContainerRef = useRef<HTMLDivElement | null>(null);
     const mobileContainerRef = useRef<HTMLDivElement | null>(null);
+    const [activePageIndex, setActivePageIndex] = React.useState(0);
 
     const registerContainer = useCallback((desktop: HTMLDivElement | null, mobile: HTMLDivElement | null) => {
         desktopContainerRef.current = desktop;
@@ -32,7 +35,7 @@ export const NavigationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }, []);
 
     return (
-        <NavigationContext.Provider value={{ navigateToPage, registerContainer }}>
+        <NavigationContext.Provider value={{ navigateToPage, registerContainer, activePageIndex, setActivePageIndex }}>
             {children}
         </NavigationContext.Provider>
     );
